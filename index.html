@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>تهنئة عيد الفطر</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* الكارت */
+.card {
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* العنوان */
+h2 {
+    margin: 5px 0 10px;
+}
+
+/* input */
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px auto;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* الأيقونات */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.actions button {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.actions button:hover {
+    transform: scale(1.1);
+}
+
+/* ألوان */
+.actions button:nth-child(1) { background:#2c3e50; color:white; }
+.actions button:nth-child(2) { background:#27ae60; color:white; }
+.actions button:nth-child(3) { background:#25D366; }
+
+.actions img {
+    width: 26px;
+}
+
+/* الكانفس */
+.canvas-wrapper {
+    width: 100%;
+    aspect-ratio: 1/1;
+    margin-top: 10px;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>🌙 تهنئة عيد الفطر</h2>
+
+<input type="text" id="name" placeholder="اكتب اسمك">
+
+<div class="actions">
+    <button onclick="generateImage()" title="عرض">👁️</button>
+    <button onclick="downloadImage()" title="تحميل">⬇️</button>
+    <button onclick="shareImage()" title="واتساب">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+    </button>
+</div>
+
+<div class="canvas-wrapper">
+    <canvas id="canvas"></canvas>
+</div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+/* جودة HD */
+const WIDTH = 1080;
+const HEIGHT = 1080;
+
+canvas.width = WIDTH;
+canvas.height = HEIGHT;
+
+const img = new Image();
+img.src = "eid.jpg"; // حط صورتك هنا
+
+img.onload = function() {
+    drawBaseImage();
+};
+
+/* رسم بدون تشويه */
+function drawBaseImage() {
+    const imgRatio = img.width / img.height;
+    const canvasRatio = WIDTH / HEIGHT;
+
+    let drawWidth, drawHeight, offsetX, offsetY;
+
+    if (imgRatio > canvasRatio) {
+        drawHeight = HEIGHT;
+        drawWidth = img.width * (HEIGHT / img.height);
+        offsetX = -(drawWidth - WIDTH) / 2;
+        offsetY = 0;
+    } else {
+        drawWidth = WIDTH;
+        drawHeight = img.height * (WIDTH / img.width);
+        offsetX = 0;
+        offsetY = -(drawHeight - HEIGHT) / 2;
+    }
+
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+}
+
+/* كتابة الاسم */
+function generateImage() {
+    const name = document.getElementById("name").value;
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    drawBaseImage();
+
+    ctx.fillStyle = "#1f3c88";
+    ctx.textAlign = "right";
+
+    ctx.font = "bold 38px Cairo";
+    ctx.fillText(name, 930, 750);
+
+}
+
+/* تحميل */
+function downloadImage() {
+    const link = document.createElement("a");
+    link.download = "eid.png";
+    link.href = canvas.toDataURL("image/png", 1.0);
+    link.click();
+}
+
+/* مشاركة واتساب بالصورة */
+async function shareImage() {
+    canvas.toBlob(async function(blob) {
+
+        const file = new File([blob], "eid.png", { type: "image/png" });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: "تهنئة عيد الفطر",
+                    text: "كل عام وأنتم بخير 🌙"
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        } else {
+            alert("سيتم تحميل الصورة ثم يمكنك مشاركتها");
+            downloadImage();
+        }
+
+    }, "image/png");
+}
+</script>
+
+</body>
+</html>
