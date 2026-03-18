@@ -169,9 +169,15 @@ function generateImage() {
     ctx.fillStyle = "#1f3c88";
     ctx.textAlign = "right";
 
-    ctx.font = "bold 38px Cairo";
+   
+    // 🔥 اسم الشخص (مكان "أخوكم")
+    ctx.font = "bold 48px Cairo";
     ctx.fillText(name, 930, 750);
 
+    // كلمة "أخوكم"
+    ctx.font = "bold 32px Cairo";
+    ctx.fillText("أخوكم", 1000, 750);
+}
 }
 
 /* تحميل */
